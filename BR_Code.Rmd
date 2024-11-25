@@ -1,0 +1,231 @@
+---
+title: "BR_Code"
+output: html_document
+date: "2024-11-24"
+---
+
+#Let's load some libraries
+```{r Libraries}
+library(tidyverse)
+library(dplyr)
+library(tidyr)
+library(readxl)
+library(ggdist)
+
+```
+
+Set theme for ggplot
+```{r Themes}
+#Theme set
+theme_set(  theme(legend.position = "none",
+                  strip.background = element_rect(fill = "White"),
+                  panel.background = element_rect(fill = "white",
+                                                  colour = "black"), 
+                  panel.grid.major = element_blank(), 
+                  panel.grid.minor = element_blank(), 
+                  text = element_text(size = 14)))
+```
+
+#Let's load some data
+```{r BR_Data}
+Breast_Reduction_Data <- read_excel("Breast_Reduction/Breast_Reduction_Data.xlsx", 
+     col_types = c("numeric", "numeric", "numeric", 
+         "numeric", "numeric", "numeric", 
+         "text", "text", "numeric"))
+
+Breast_Reduction_Data$ID <- as.factor("All")
+
+Breast_Reduction_Data <- Breast_Reduction_Data %>%
+                           separate(`Time to fly`, into = c("travel_time", "unit_travel"), 
+                                    sep = "_", convert = TRUE) %>% 
+                           separate(`Time to final size`, into = c("final_time", "unit_final"), 
+                                    sep = "_", convert = TRUE)
+  
+```
+
+#RAINCLOUD PLOT
+This plot is my favourite thing to do right now. I just think that it's so fucking cool!
+
+```{r Peak Swelling}
+Breast_Reduction_Data %>%
+ggplot(aes(x= ID, y = `Peak swelling (days)`, fill = ID)) +
+    geom_hline(yintercept = 30.5, 
+             linetype = "dashed", 
+             colour = "pink")+
+  geom_jitter(width = 0.08, shape = 21, 
+              #fill = NA, 
+              size = 2,
+              alpha = 0.3) +
+    stat_interval(.width = c(.1, .25, .5, 1), #bands
+                   height = 5, 
+                   show.legend = F, 
+                   alpha = 0.6, 
+                  position= position_nudge(x = 0.1)) +
+    #half violin
+  ggdist::stat_halfeye(width = 0.3, #width is for dist.
+                       adjust = 0.66, #bandwidth for dist
+                       alpha = 0.4, 
+                       justification = -0.2, #push dist.
+                       #remove slab interval
+                       .width = 0, 
+                       shape = 16,
+                       #fill = "tan",
+                       point_colour = "white", 
+                       point_alpha = 1,
+                       point_interval= mean_qi,
+                       position= position_nudge(x = 0.1))+
+    rcartocolor::scale_color_carto_d(palette = "Emrld") + 
+    scale_fill_manual(values = c("#f188e4"),
+                      labels = c("Reddit-User Data")) +
+  xlab("")+
+  coord_flip()+
+  theme_void() +
+    theme(axis.line.x = element_line(),          # Add x-axis line
+        axis.text.x = element_text(size = 14), # Add and customize x-axis text
+        axis.ticks.x = element_line(), 
+        legend.position = "none")  
+    
+    
+
+```
+
+```{r Time to fly}
+Breast_Reduction_Data %>%
+ggplot(aes(x= ID, y = travel_time, fill = ID)) +
+    geom_hline(yintercept = 2.2, 
+             linetype = "dashed", 
+             colour = "blue")+
+  geom_jitter(width = 0.08, shape = 21, 
+              #fill = NA, 
+              size = 2,
+              alpha = 0.3) +
+    stat_interval(.width = c(.1, .25, .5, 1), #bands
+                   height = 5, 
+                   show.legend = F, 
+                   alpha = 0.6, 
+                  position= position_nudge(x = 0.1)) +
+    #half violin
+  ggdist::stat_halfeye(width = 0.3, #width is for dist.
+                       adjust = 0.66, #bandwidth for dist
+                       alpha = 0.4, 
+                       justification = -0.2, #push dist.
+                       #remove slab interval
+                       .width = 0, 
+                       shape = 16,
+                       #fill = "tan",
+                       point_colour = "white", 
+                       point_alpha = 1,
+                       point_interval= mean_qi,
+                       position= position_nudge(x = 0.1))+
+    rcartocolor::scale_color_carto_d(palette = "Emrld") + 
+    scale_fill_manual(values = c("blue"),
+                      labels = c("Reddit-User Data")) +
+  xlab("")+
+  coord_flip()+
+  theme_void() +
+    theme(axis.line.x = element_line(),          # Add x-axis line
+        axis.text.x = element_text(size = 14), # Add and customize x-axis text
+        axis.ticks.x = element_line(), 
+        legend.position = "none")  
+
+```
+
+```{r Time to final}
+Breast_Reduction_Data %>%
+ggplot(aes(x= ID, y = final_time, fill = ID)) +
+    geom_hline(yintercept = 4, 
+             linetype = "dashed", 
+             colour = "#3A7113")+
+  geom_jitter(width = 0.08, shape = 21, 
+              #fill = NA, 
+              size = 2,
+              alpha = 0.3) +
+    stat_interval(.width = c(.1, .25, .5, 1), #bands
+                   height = 5, 
+                   show.legend = F, 
+                   alpha = 0.6, 
+                  position= position_nudge(x = 0.1)) +
+    #half violin
+  ggdist::stat_halfeye(width = 0.3, #width is for dist.
+                       adjust = 0.66, #bandwidth for dist
+                       alpha = 0.4, 
+                       justification = -0.2, #push dist.
+                       #remove slab interval
+                       .width = 0, 
+                       shape = 16,
+                       #fill = "tan",
+                       point_colour = "white", 
+                       point_alpha = 1,
+                       point_interval= mean_qi,
+                       position= position_nudge(x = 0.1))+
+    rcartocolor::scale_color_carto_d(palette = "Emrld") + 
+    scale_fill_manual(values = c("#5B9632"),
+                      labels = c("Reddit-User Data")) +
+  xlab("")+
+  coord_flip()+
+  ylim(c(0, 12))+
+  theme_void() +
+    theme(axis.line.x = element_line(),          # Add x-axis line
+        axis.text.x = element_text(size = 14), # Add and customize x-axis text
+        axis.ticks.x = element_line(), 
+        legend.position = "none")  
+
+```
+
+```{r Drain usage}
+
+# Summarize the data
+summary_data <- Breast_Reduction_Data %>%
+  count(`Drains (Y/N)`) %>%
+  mutate(label = ifelse(`Drains (Y/N)` == 1, "Yes", "No"))
+
+# Create the pie chart
+ggplot(summary_data, aes(x = "", y = n, fill = label)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar("y") +
+  theme_void() +
+  labs(fill = "Response") +
+  scale_fill_manual(values = c("Yes" = "#A9EC65", "No" = "#28B05F")) +
+  ggtitle("Proportion of 0/1 Responses")
+
+Breast_Reduction_Data %>%
+ggplot(aes(x= ID, y = `Drains (Days)`, fill = ID)) +
+    geom_hline(yintercept = 5, 
+             linetype = "dashed", 
+             colour = "#53E39A")+
+  geom_jitter(width = 0.08, shape = 21, 
+              #fill = NA, 
+              size = 2,
+              alpha = 0.3) +
+    stat_interval(.width = c(.1, .25, .5, 1), #bands
+                   height = 5, 
+                   show.legend = F, 
+                   alpha = 0.6, 
+                  position= position_nudge(x = 0.1)) +
+    #half violin
+  ggdist::stat_halfeye(width = 0.3, #width is for dist.
+                       adjust = 0.66, #bandwidth for dist
+                       alpha = 0.4, 
+                       justification = -0.2, #push dist.
+                       #remove slab interval
+                       .width = 0, 
+                       shape = 16,
+                       #fill = "tan",
+                       point_colour = "white", 
+                       point_alpha = 1,
+                       point_interval= mean_qi,
+                       position= position_nudge(x = 0.1))+
+    rcartocolor::scale_color_carto_d(palette = "Emrld") + 
+    scale_fill_manual(values = c("#53E39A"),
+                      labels = c("Reddit-User Data")) +
+  xlab("")+
+  coord_flip()+
+  ylim(c(0, 12))+
+  theme_void() +
+    theme(axis.line.x = element_line(),          # Add x-axis line
+        axis.text.x = element_text(size = 14), # Add and customize x-axis text
+        axis.ticks.x = element_line(), 
+        legend.position = "none")  
+
+```
+
