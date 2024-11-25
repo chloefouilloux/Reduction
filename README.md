@@ -1,5 +1,5 @@
 Hello!
-This is just kind of a fun thing I did a bit haphhazardly. Just wanted some answers to some questions, thought I'd share what the data have to say!
+This is just kind of a fun thing I did a bit haphazardly. Just wanted some answers to some questions, thought I'd share what the data have to say!
 
 There are 3 files, 
 1. **BR_Code**, which is the R code to making the plots
